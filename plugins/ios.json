@@ -1,0 +1,27 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    },
+    "cordova-plugin-ionic-webview": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    },
+    "ionic-plugin-keyboard": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    }
+  },
+  "dependent_plugins": {}
+}
