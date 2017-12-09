@@ -1,0 +1,37 @@
+<ion-header>
+    <ion-navbar no-border-bottom>
+        <ion-title>
+            Account
+        </ion-title>
+    </ion-navbar>
+
+    <ion-toolbar no-border-top>
+        <ion-segment [(ngModel)]="tab">
+            <ion-segment-button value="balances">
+                Balances
+            </ion-segment-button>
+            <ion-segment-button value="trades">
+                Trades
+            </ion-segment-button>
+            <ion-segment-button value="offers">
+                Offers
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div [ngSwitch]="tab">
+        <div *ngSwitchCase="'balances'">
+            {{text}}
+        </div>
+
+        <div *ngSwitchCase="'trades'">
+            Trades
+        </div>
+
+        <div *ngSwitchCase="'offers'">
+            Offers
+        </div>
+    </div>
+</ion-content>
