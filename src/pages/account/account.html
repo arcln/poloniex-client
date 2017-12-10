@@ -21,17 +21,69 @@
 </ion-header>
 
 <ion-content>
-    <div [ngSwitch]="tab">
-        <div *ngSwitchCase="'balances'">
-            {{text}}
-        </div>
+    <ion-refresher (ionRefresh)="refreshBalances($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-spinner *ngIf="loading"></ion-spinner>
+    <div *ngIf="!loading">
+        <div [ngSwitch]="tab">
+            <div *ngSwitchCase="'balances'">
+                <ion-list no-border>
+                    <ion-item>
+                        <b>USDT</b>
+                        <ion-note item-end>
+                            ${{usdtBalance?.available}}
+                        </ion-note>
+                    </ion-item>
+                    <ion-item>
+                        <b>Estimated value of holdings</b>
+                        <ion-note item-end>
+                            ${{holdings}}
+                        </ion-note>
+                    </ion-item>
+                </ion-list>
 
-        <div *ngSwitchCase="'trades'">
-            Trades
-        </div>
+                <ion-grid *ngIf="balances?.length">
+                    <ion-row>
+                        <ion-col col-3>
+                            Coin
+                        </ion-col>
+                        <ion-col col-5>
+                            Available
+                        </ion-col>
+                        <ion-col col-4>
+                            US$ Estimation
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+                <ion-list no-border *ngIf="balances?.length">
+                    <ion-item *ngFor="let balance of balances">
+                        <ion-row>
+                            <ion-col col-2>
+                                <b>{{balance.coin}}</b>
+                            </ion-col>
+                            <ion-col col-4 offset-1>
+                                {{balance.available}}
+                            </ion-col>
+                            <ion-col col-3 offset-2 style="text-align: right">
+                                ${{balance.usdtValue}}
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                </ion-list>
 
-        <div *ngSwitchCase="'offers'">
-            Offers
+                <div class="center" *ngIf="!balances?.length">
+                    You don't have any crypto currencies.
+                </div>
+            </div>
+
+            <div *ngSwitchCase="'trades'">
+                Trades
+            </div>
+
+            <div *ngSwitchCase="'offers'">
+                Offers
+            </div>
         </div>
     </div>
 </ion-content>

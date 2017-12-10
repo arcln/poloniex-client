@@ -14,6 +14,8 @@ import {SplashScreen} from '@ionic-native/splash-screen';
 // import Highcharts from 'highcharts';
 // import {ChartModule} from 'angular2-highcharts';
 import {PoloniexService} from '../services/poloniex.service';
+import {HTTP} from '@ionic-native/http';
+import {Http, HttpModule} from '@angular/http';
 import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({

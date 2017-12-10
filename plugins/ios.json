@@ -21,7 +21,14 @@
     },
     "ionic-plugin-keyboard": {
       "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    },
+    "cordova-plugin-advanced-http": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.arthurchaloin.poloniexclient"
+    }
+  }
 }
