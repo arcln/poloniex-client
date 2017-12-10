@@ -14,14 +14,14 @@
                 Trades
             </ion-segment-button>
             <ion-segment-button value="offers">
-                Offers
+                Orders
             </ion-segment-button>
         </ion-segment>
     </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-refresher (ionRefresh)="refreshBalances($event)">
+    <ion-refresher (ionRefresh)="refresh($event)">
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
     <ion-spinner *ngIf="loading"></ion-spinner>
@@ -78,11 +78,53 @@
             </div>
 
             <div *ngSwitchCase="'trades'">
-                Trades
+                <ion-list no-border *ngFor="let market of trades">
+                    <ion-list-header>
+                        {{market.market}}
+                    </ion-list-header>
+                    <ion-item *ngFor="let trade of market.data">
+                        <ion-row>
+                            <ion-col col-2>
+                                <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
+                                <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>
+                            </ion-col>
+                            <ion-col col-4 offset-1>
+                                {{trade.amount}}
+                            </ion-col>
+                            <ion-col col-3>
+                                @{{trade.rate}}
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                </ion-list>
             </div>
 
             <div *ngSwitchCase="'offers'">
-                Offers
+                <div padding class="center" *ngIf="!orders?.length">
+                    You don't have any open orders.
+                </div>
+
+                <div *ngIf="orders?.length">
+                    <ion-list no-border *ngFor="let market of orders">
+                        <ion-list-header>
+                            {{market.market}}
+                        </ion-list-header>
+                        <ion-item *ngFor="let trade of market.data">
+                            <ion-row>
+                                <ion-col col-2>
+                                    <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
+                                    <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>
+                                </ion-col>
+                                <ion-col col-4 offset-1>
+                                    {{trade.amount}}
+                                </ion-col>
+                                <ion-col col-3>
+                                    @{{trade.rate}}
+                                </ion-col>
+                            </ion-row>
+                        </ion-item>
+                    </ion-list>
+                </div>
             </div>
         </div>
     </div>

@@ -17,6 +17,7 @@ import {PoloniexService} from '../services/poloniex.service';
 import {HTTP} from '@ionic-native/http';
 import {Http, HttpModule} from '@angular/http';
 import {HttpClientModule} from '@angular/common/http';
+import {Logger} from '../services/logger.service';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,8 @@ import {HttpClientModule} from '@angular/common/http';
         StatusBar,
         SplashScreen,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
-        PoloniexService
+        PoloniexService,
+        Logger
     ]
 })
 export class AppModule {

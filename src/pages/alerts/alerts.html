@@ -1,11 +1,19 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      About
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>
+            Alerts
+        </ion-title>
+
+        <ion-buttons end>
+            <button ion-button icon-only (click)="onAdd($event)">
+                <ion-icon name="add"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-
+    <div padding class="center">
+        You don't have any alerts.
+    </div>
 </ion-content>

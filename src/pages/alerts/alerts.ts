@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {AlertController, NavController} from 'ionic-angular';
+import {Logger} from '../../services/logger.service';
 
 @Component({
     selector: 'page-alerts',
@@ -7,8 +8,11 @@ import {NavController} from 'ionic-angular';
 })
 export class AlertsPage {
 
-    constructor(public navCtrl: NavController) {
-
+    constructor(private navCtrl: NavController,
+                private logger: Logger) {
     }
 
+    public onAdd(): void {
+        this.logger.alert('Coming Soon', 'This feature will come in a future update!', ['OK']);
+    }
 }
