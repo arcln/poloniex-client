@@ -11,13 +11,14 @@ import {TabsPage} from '../pages/tabs/tabs';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 
-// import Highcharts from 'highcharts';
-// import {ChartModule} from 'angular2-highcharts';
 import {PoloniexService} from '../services/poloniex.service';
-import {HTTP} from '@ionic-native/http';
-import {Http, HttpModule} from '@angular/http';
 import {HttpClientModule} from '@angular/common/http';
 import {Logger} from '../services/logger.service';
+import {UtilsService} from '../services/utils.service';
+import {ExchangePage} from '../pages/exchange/exchange';
+import {TradePage} from '../pages/trade/trade';
+import {IonicStorageModule} from '@ionic/storage';
+import {SettingsPage} from '../pages/settings/settings';
 
 @NgModule({
     declarations: [
@@ -25,13 +26,16 @@ import {Logger} from '../services/logger.service';
         AccountPage,
         AlertsPage,
         MarketsPage,
+        ExchangePage,
+        TradePage,
+        SettingsPage,
         TabsPage
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
         IonicModule.forRoot(App),
-        // ChartModule.forRoot(Highcharts)
+        IonicStorageModule.forRoot()
     ],
     bootstrap: [IonicApp],
     entryComponents: [
@@ -39,14 +43,18 @@ import {Logger} from '../services/logger.service';
         AccountPage,
         AlertsPage,
         MarketsPage,
-        TabsPage
+        ExchangePage,
+        TabsPage,
+        SettingsPage,
+        TradePage
     ],
     providers: [
         StatusBar,
         SplashScreen,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         PoloniexService,
-        Logger
+        Logger,
+        UtilsService
     ]
 })
 export class AppModule {

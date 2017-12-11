@@ -78,6 +78,7 @@
     </platform>
     <allow-navigation href="http://192.168.0.62:8100" />
     <allow-navigation href="http://192.168.0.62:8101" />
+    <allow-navigation href="http://192.168.0.21:8101" />
     <engine name="ios" spec="^4.5.4" />
     <engine name="browser" spec="5.0.1" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />

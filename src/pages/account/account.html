@@ -3,6 +3,12 @@
         <ion-title>
             Account
         </ion-title>
+
+        <ion-buttons end>
+            <button ion-button icon-only (click)="onSettingsClick($event)">
+                <ion-icon ios="ios-cog-outline" md="md-cog"></ion-icon>
+            </button>
+        </ion-buttons>
     </ion-navbar>
 
     <ion-toolbar no-border-top>
@@ -51,14 +57,14 @@
                         <ion-col col-5>
                             Available
                         </ion-col>
-                        <ion-col col-4>
+                        <ion-col col-4 class="right-text">
                             US$ Estimation
                         </ion-col>
                     </ion-row>
                 </ion-grid>
                 <ion-list no-border *ngIf="balances?.length">
-                    <ion-item *ngFor="let balance of balances">
-                        <ion-row>
+                    <button ion-item *ngFor="let balance of balances" (click)="onCoinClick(balance)">
+                        <ion-row style="font-size: 14px;">
                             <ion-col col-2>
                                 <b>{{balance.coin}}</b>
                             </ion-col>
@@ -69,7 +75,7 @@
                                 ${{balance.usdtValue}}
                             </ion-col>
                         </ion-row>
-                    </ion-item>
+                    </button>
                 </ion-list>
 
                 <div class="center" *ngIf="!balances?.length">
@@ -83,7 +89,7 @@
                         {{market.market}}
                     </ion-list-header>
                     <ion-item *ngFor="let trade of market.data">
-                        <ion-row>
+                        <ion-row style="font-size: 14px;">
                             <ion-col col-2>
                                 <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
                                 <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>
@@ -92,7 +98,7 @@
                                 {{trade.amount}}
                             </ion-col>
                             <ion-col col-3>
-                                @{{trade.rate}}
+                                @{{utils.formatNb(trade.rate)}} {{market.market.split(' ')[0]}}
                             </ion-col>
                         </ion-row>
                     </ion-item>
@@ -110,7 +116,7 @@
                             {{market.market}}
                         </ion-list-header>
                         <ion-item *ngFor="let trade of market.data">
-                            <ion-row>
+                            <ion-row style="font-size: 14px;">
                                 <ion-col col-2>
                                     <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
                                     <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>

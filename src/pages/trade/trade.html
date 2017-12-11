@@ -1,0 +1,60 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Trade {{pageTitle}}
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <ion-spinner *ngIf="loading"></ion-spinner>
+    <div *ngIf="!loading">
+        <ion-list no-border>
+            <ion-list-header>
+                Buy {{pageTitle}}
+            </ion-list-header>
+            <ion-item>
+                <ion-label color="primary" fixed>Price</ion-label>
+                <ion-input [(ngModel)]="buyPrice" (ngModelChange)="onBuyPriceChange($event)" type="number"
+                           placeholder="{{market}}"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" fixed>Quantity</ion-label>
+                <ion-input [(ngModel)]="buyQuantity" (ngModelChange)="onBuyQuantityChange($event)" type="number"
+                           placeholder="{{pageTitle}}"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" fixed>Total</ion-label>
+                <ion-input [(ngModel)]="buyTotal" (ngModelChange)="onBuyTotalChange($event)" type="number"
+                           placeholder="{{market}}"></ion-input>
+            </ion-item>
+        </ion-list>
+        <button ion-button full outline style="margin-top: -20px" (click)="onBuyClick()"
+                [disabled]="!buyPrice || !buyQuantity || !buyTotal">Buy
+        </button>
+
+        <ion-list no-border style="margin-top: 42px">
+            <ion-list-header>
+                Sell {{pageTitle}}
+            </ion-list-header>
+            <ion-item>
+                <ion-label color="primary" fixed>Price</ion-label>
+                <ion-input [(ngModel)]="sellPrice" (ngModelChange)="onSellPriceChange($event)" type="number"
+                           placeholder="{{market}}"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" fixed>Quantity</ion-label>
+                <ion-input [(ngModel)]="sellQuantity" (ngModelChange)="onSellQuantityChange($event)" type="number"
+                           placeholder="{{pageTitle}}"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" fixed>Total</ion-label>
+                <ion-input [(ngModel)]="sellTotal" (ngModelChange)="onSellTotalChange($event)" type="number"
+                           placeholder="{{market}}"></ion-input>
+            </ion-item>
+        </ion-list>
+        <button no-padding ion-button full outline style="margin-top: -20px" (click)="onSellClick()"
+                [disabled]="!sellPrice || !sellQuantity || !sellTotal">Sell
+        </button>
+    </div>
+</ion-content>

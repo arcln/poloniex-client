@@ -1,17 +1,59 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
+    <ion-navbar no-border-bottom>
+        <ion-title>
+            Markets
+        </ion-title>
+    </ion-navbar>
+
+    <ion-toolbar no-border-top>
+        <ion-segment padding [(ngModel)]="tab" (click)="onMarketChange($event)">
+            <ion-segment-button value="BTC">
+                BTC
+            </ion-segment-button>
+            <ion-segment-button value="ETH">
+                ETH
+            </ion-segment-button>
+            <ion-segment-button value="XMR">
+                XMR
+            </ion-segment-button>
+            <ion-segment-button value="USDT">
+                USDT
+            </ion-segment-button>
+        </ion-segment>
+    </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
+<ion-content>
+    <ion-spinner *ngIf="loading"></ion-spinner>
+    <div *ngIf="!loading">
+        <ion-grid>
+            <ion-row>
+                <ion-col col-3>
+                    Coin
+                </ion-col>
+                <ion-col col-5 offset-1>
+                    Last price
+                </ion-col>
+                <ion-col col-3>
+                    Last change
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+
+        <ion-list no-border>
+            <button ion-item *ngFor="let coin of market" (click)="coinClicked($event, coin)">
+                <ion-row style="font-size: 14px">
+                    <ion-col col-3>
+                        <b>{{coin.key.split('_')[1]}}</b>
+                    </ion-col>
+                    <ion-col col-5 offset-1>
+                        {{coin.last}}
+                    </ion-col>
+                    <ion-col col-3 class="right-text" [style.color]="coin.percentChange < 0 ? 'red' : 'green'">
+                        <span *ngIf="coin.percentChange > 0">+</span>{{utils.formatNb(coin.percentChange, 4)}}%
+                    </ion-col>
+                </ion-row>
+            </button>
+        </ion-list>
+    </div>
 </ion-content>

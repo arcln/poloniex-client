@@ -4,6 +4,8 @@ import {AlertController, Toast, ToastController} from 'ionic-angular';
 @Injectable()
 export class Logger {
 
+    private alertIsOpen: boolean = false;
+
     constructor(private alertCtrl: AlertController,
                 private toastCtrl: ToastController) {
     }
@@ -27,11 +29,33 @@ export class Logger {
     }
 
     public alert(title: string, message: string, buttons: Array<any>) {
-        this.alertCtrl.create({
-            title: title,
-            subTitle: message,
-            buttons: buttons
-        }).present();
+        if (!this.alertIsOpen) {
+            this.alertIsOpen = true;
+            this.alertCtrl.create({
+                title: title,
+                subTitle: message,
+                enableBackdropDismiss: false,
+                buttons: buttons.map(button => {
+                    if (typeof button === 'object') {
+                        const baseHandler = button.handler;
+                        button.handler = function() {
+                            this.alertIsOpen = false;
+                            baseHandler();
+                        }.bind(this);
+                        return button;
+                    } else {
+                        return {
+                            text: button,
+                            handler: function() {
+                                this.alertIsOpen = false;
+                            }.bind(this)
+                        };
+                    }
+                })
+            }).present();
+        } else {
+            Logger.warn('Alert was blocked: ', title, message);
+        }
     }
 
     public toast(message: string, buttonOrDuration: any) {

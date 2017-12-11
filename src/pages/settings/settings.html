@@ -1,0 +1,35 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Settings
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <div>
+        <ion-list no-border>
+            <ion-list-header>
+                API Authentication
+            </ion-list-header>
+            <ion-item>
+                <ion-label color="primary" fixed>API Key</ion-label>
+                <ion-input [(ngModel)]="apiKey" (ngModelChange)="onApiKeyChange($event)" type="text"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label color="primary" fixed>API Secret</ion-label>
+                <ion-input [(ngModel)]="apiSecret" (ngModelChange)="onApiSecretChange($event)" type="password"></ion-input>
+            </ion-item>
+        </ion-list>
+
+        <ion-list no-border style="margin-top: 42px">
+            <ion-list-header>
+                App settings
+            </ion-list-header>
+            <ion-item>
+                <ion-label color="primary">Refresh delay (ms)</ion-label>
+                <ion-input [(ngModel)]="refreshDelay" (ngModelChange)="onRefreshDelayChange($event)" type="number" placeholder="5000"></ion-input>
+            </ion-item>
+        </ion-list>
+    </div>
+</ion-content>

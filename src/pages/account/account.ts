@@ -1,9 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {LoadingController, NavController} from 'ionic-angular';
 import {PoloniexService} from '../../services/poloniex.service';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
 import {Logger} from '../../services/logger.service';
+import {UtilsService} from '../../services/utils.service';
+import {ExchangePage} from '../exchange/exchange';
+import {SettingsPage} from '../settings/settings';
 
 @Component({
     selector: 'page-account',
@@ -14,7 +17,7 @@ export class AccountPage implements OnInit {
     public tab: string = 'balances';
 
     public balances: Array<any> = [];
-    public usdtBalance: any = null;
+    public usdtBalance: any = {available: 0};
     public holdings: string = '0';
     private btcPrice: number = 0;
 
@@ -22,16 +25,13 @@ export class AccountPage implements OnInit {
     public orders: Array<any> = [];
 
     constructor(private navCtrl: NavController,
-                private poloniex: PoloniexService) {
+                private poloniex: PoloniexService,
+                private utils: UtilsService) {
     }
 
     public ngOnInit(): void {
+        this.poloniex.subscribeToNavEvents(this.navCtrl);
         this.refresh();
-    }
-
-    public formatNb(nb: number): string {
-        const floatPrecision = 4;
-        return nb.toFixed(floatPrecision);
     }
 
     public computeBalances(ticker: any, balances: any): void {
@@ -46,14 +46,14 @@ export class AccountPage implements OnInit {
         });
 
         filteredBalances = filteredBalances.map(balance => {
-            balance.usdtValue = this.formatNb(parseFloat(balance.btcValue) * this.btcPrice);
+            balance.usdtValue = this.utils.formatNb(parseFloat(balance.btcValue) * this.btcPrice);
             return balance;
         });
 
         this.balances = filteredBalances.sort((a, b) => a.usdtValue < b.usdtValue ? -1 : 1);
         this.usdtBalance = balances.USDT;
         const valueSum = this.balances.length ? (this.balances.length > 1 ? this.balances.reduce((a, b) => parseFloat(a.usdtValue) + parseFloat(b.usdtValue)) : parseFloat(this.balances[0].usdtValue)) : 0;
-        this.holdings = this.formatNb(valueSum + parseFloat(this.usdtBalance.available));
+        this.holdings = this.utils.formatNb(valueSum + parseFloat(this.usdtBalance.available));
     }
 
     public computeTrades(trades: any): void {
@@ -87,6 +87,12 @@ export class AccountPage implements OnInit {
                 this.poloniex.api('returnOpenOrders', ['all', null]),
             ]).subscribe(data => {
                 console.log(data);
+                data.forEach(req => {
+                    if (req === '__nonce_failure') {
+                        setTimeout(this.refresh, 500);
+                        return;
+                    }
+                });
 
                 try {
                     this.computeBalances(data[0], data[1]);
@@ -98,12 +104,27 @@ export class AccountPage implements OnInit {
                         refresher.complete();
                     }
                 } catch (e) {
+                    this.loading = false;
+                    if (refresher) {
+                        refresher.complete();
+                    }
                     Logger.error(e);
-                    this.refresh(refresher);
                 }
             });
         } catch (e) {
             Logger.error(e);
         }
+    }
+
+    public onCoinClick(balance: any): void {
+        this.navCtrl.push(ExchangePage, {
+            coin: {
+                key: 'USDT_' + balance.coin
+            }
+        });
+    }
+
+    public onSettingsClick(): void {
+        this.navCtrl.push(SettingsPage);
     }
 }

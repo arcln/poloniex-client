@@ -1,0 +1,103 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            {{pageTitle}}
+        </ion-title>
+
+        <ion-buttons end>
+            <button ion-button (click)="trade($event)">
+                Trade
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <div>
+        <ion-list no-border>
+            <ion-item>
+                Last price
+                <ion-note item-end>
+                    {{coin?.last}} {{navParams.get('coin').key.split('_')[0]}}
+                </ion-note>
+            </ion-item>
+            <ion-item>
+                Variation
+                <ion-note item-end [style.color]="coin?.percentChange > 0 ? 'green' : 'red'">
+                    <span *ngIf="coin?.percentChange > 0">+</span>
+                    {{utils.formatNb(coin?.percentChange, 4)}}%
+                </ion-note>
+            </ion-item>
+        </ion-list>
+
+        <ion-spinner *ngIf="loading" style="margin-top: 20vh; z-index: 42"></ion-spinner>
+        <canvas #graph class="graph-card"></canvas>
+
+        <div padding (click)="onGraphSettingsChange($event)">
+            <ion-segment [(ngModel)]="period">
+                <ion-segment-button value="6h">
+                    6h
+                </ion-segment-button>
+                <ion-segment-button value="24h">
+                    24h
+                </ion-segment-button>
+                <ion-segment-button value="2d">
+                    2d
+                </ion-segment-button>
+                <ion-segment-button value="4d">
+                    4d
+                </ion-segment-button>
+                <ion-segment-button value="1w">
+                    1w
+                </ion-segment-button>
+                <ion-segment-button value="2w">
+                    2w
+                </ion-segment-button>
+                <ion-segment-button value="1m">
+                    1m
+                </ion-segment-button>
+                <ion-segment-button value="all">
+                    All
+                </ion-segment-button>
+            </ion-segment>
+            <br>
+            <ion-segment [(ngModel)]="resolution">
+                <ion-segment-button value="5m">
+                    5 min
+                </ion-segment-button>
+                <ion-segment-button value="15m">
+                    15 min
+                </ion-segment-button>
+                <ion-segment-button value="30m">
+                    30 min
+                </ion-segment-button>
+                <ion-segment-button value="2h">
+                    2h
+                </ion-segment-button>
+                <ion-segment-button value="4h">
+                    4h
+                </ion-segment-button>
+                <ion-segment-button value="24h">
+                    24h
+                </ion-segment-button>
+            </ion-segment>
+        </div>
+
+        <ion-list no-border>
+            <ion-item>
+                My balance
+                <ion-note item-end>
+                    <ion-spinner style="margin-right: 10px" *ngIf="balanceLoading"></ion-spinner>
+                    <span *ngIf="!balanceLoading">{{coinBalance}} {{navParams.get('coin').key.split('_')[1]}}</span>
+                </ion-note>
+            </ion-item>
+            <ion-item>
+                Market value estimation
+                <ion-note item-end>
+                    <ion-spinner style="margin-right: 10px" *ngIf="balanceLoading"></ion-spinner>
+                    <span *ngIf="!balanceLoading">{{coinEstimation}} {{navParams.get('coin').key.split('_')[0]}}</span>
+                </ion-note>
+            </ion-item>
+        </ion-list>
+    </div>
+</ion-content>
