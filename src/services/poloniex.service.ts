@@ -70,7 +70,7 @@ export class PoloniexService {
                 setTimeout(() => this.nonceErrorCount = 0, 1000);
                 return '__nonce_failure';
             } else if (data.error.includes('Poloniex: Error. API key and secret required') || data.error.includes('Invalid API key/secret pair.')) {
-                this.logger.alert('Missing/Invalid API Key', 'You API Key/API Secret pair is neither missing or invalid. Would you like to update them now?', [
+                this.logger.alert('Missing/Invalid API Key', 'Your API Key/API Secret pair is neither missing or invalid. Would you like to update them now?', [
                     'Later',
                     {
                         text: 'Update',

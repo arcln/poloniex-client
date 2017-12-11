@@ -29,6 +29,7 @@
     "angular2-highcharts": "^0.5.5",
     "autobahn": "^17.5.2",
     "chart.js": "^2.7.1",
+    "cordova-android": "6.3.0",
     "cordova-browser": "5.0.1",
     "cordova-ios": "^4.5.4",
     "cordova-plugin-advanced-http": "^1.9.0",
@@ -62,7 +63,8 @@
     },
     "platforms": [
       "ios",
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }
