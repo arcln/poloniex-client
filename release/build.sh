@@ -1,12 +1,13 @@
 #! /usr/bin/env bash
 
-version="1.0.0"
+version="1.0.1"
 
 cd ../
 
 echo "===== BUILDING IOS RELEASE ======"
 
 ionic cordova build ios --prod
+#cp "platforms/ios/build/device/Poloniex.ipa" "release/ios/poloniex-v"$version"_signed.ipa"
 
 
 echo "===== BUILDING ANDROID RELEASE ====="

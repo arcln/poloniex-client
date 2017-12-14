@@ -64,20 +64,20 @@ export class Logger {
         if (typeof buttonOrDuration === 'string') {
             toast = this.toastCtrl.create({
                 message: message,
-                position: 'top',
+                // position: 'top',
                 showCloseButton: true,
                 closeButtonText: buttonOrDuration
             });
         } else if (typeof buttonOrDuration === 'number') {
             toast = this.toastCtrl.create({
                 message: message,
-                position: 'top',
+                // position: 'top',
                 duration: buttonOrDuration
             });
         } else {
             toast = this.toastCtrl.create({
                 message: message,
-                position: 'top',
+                // position: 'top',
                 duration: 3000
             });
         }
