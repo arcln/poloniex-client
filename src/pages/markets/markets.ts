@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {NavController, Refresher} from 'ionic-angular';
 import {PoloniexService} from '../../services/poloniex.service';
 import {UtilsService} from '../../services/utils.service';
 import {ExchangePage} from '../exchange/exchange';
@@ -26,7 +26,12 @@ export class MarketsPage implements OnInit {
     }
 
     public ngOnInit(): void {
+        const __this = this;
+
         this.poloniex.subscribeToNavEvents(this.navCtrl);
+        this.poloniex.$refreshState.subscribe(event => {
+            if (event) this.tickerUpdate.bind(__this).call()
+        });
         this.storage.get('refreshDelay').then(rd => {
             if (rd) {
                 this.refreshDelay = rd;
@@ -37,11 +42,15 @@ export class MarketsPage implements OnInit {
         this.tickerUpdate();
     }
 
-    public tickerUpdate(): void {
+    private tickerUpdate(): void {
+        console.log('UPDATE');
         this.poloniex.api('returnTicker').subscribe(function(ticker) {
             this.fullMarket = this.utils.toArray(ticker);
             this.onMarketChange();
-            setTimeout(this.tickerUpdate.bind(this), this.refreshDelay);
+
+            if (this.poloniex.refreshState) {
+                setTimeout(this.tickerUpdate.bind(this), this.refreshDelay);
+            }
         }.bind(this));
     }
 
@@ -66,4 +75,7 @@ export class MarketsPage implements OnInit {
         });
     }
 
+    public toggleRefresh(refresher: Refresher): void {
+        this.poloniex.toggleRefresh(refresher);
+    }
 }

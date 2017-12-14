@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, NavController} from 'ionic-angular';
+import {LoadingController, NavController, Refresher} from 'ionic-angular';
 import {PoloniexService} from '../../services/poloniex.service';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/forkJoin';
@@ -7,6 +7,7 @@ import {Logger} from '../../services/logger.service';
 import {UtilsService} from '../../services/utils.service';
 import {ExchangePage} from '../exchange/exchange';
 import {SettingsPage} from '../settings/settings';
+import {Storage} from '@ionic/storage';
 
 @Component({
     selector: 'page-account',
@@ -15,6 +16,7 @@ import {SettingsPage} from '../settings/settings';
 export class AccountPage implements OnInit {
     public loading = true;
     public tab: string = 'balances';
+    private refreshDelay: number = 5000;
 
     public balances: Array<any> = [];
     public usdtBalance: any = {available: 0};
@@ -26,12 +28,27 @@ export class AccountPage implements OnInit {
 
     constructor(private navCtrl: NavController,
                 private poloniex: PoloniexService,
-                private utils: UtilsService) {
+                private utils: UtilsService,
+                private storage: Storage) {
     }
 
     public ngOnInit(): void {
+        const __this = this;
+
+        this.storage.get('refreshDelay').then(rd => {
+            if (rd) {
+                this.refreshDelay = rd;
+            } else {
+                this.storage.set('refreshDelay', 5000);
+            }
+        });
+
         this.poloniex.subscribeToNavEvents(this.navCtrl);
-        this.refresh();
+        this.poloniex.$refreshState.subscribe(event => {
+            if (event) this.refresh.bind(__this).call()
+        });
+
+        this.refresh.bind(__this).call();
     }
 
     public computeBalances(ticker: any, balances: any): void {
@@ -78,7 +95,9 @@ export class AccountPage implements OnInit {
         });
     }
 
-    public refresh(refresher?: any): void {
+    public refresh(): void {
+        const __this = this;
+
         try {
             Observable.forkJoin([
                 this.poloniex.api('returnTicker'),
@@ -86,10 +105,9 @@ export class AccountPage implements OnInit {
                 this.poloniex.api('returnTradeHistory', ['all', null]),
                 this.poloniex.api('returnOpenOrders', ['all', null]),
             ]).subscribe(data => {
-                console.log(data);
                 data.forEach(req => {
-                    if (req === '__nonce_failure') {
-                        setTimeout(this.refresh, 500);
+                    if (!this.poloniex.refreshState && req === '__nonce_failure') {
+                        this.refresh.bind(__this).call();
                         return;
                     }
                 });
@@ -100,15 +118,13 @@ export class AccountPage implements OnInit {
                     this.computeOrders(data[3]);
 
                     this.loading = false;
-                    if (refresher) {
-                        refresher.complete();
-                    }
                 } catch (e) {
                     this.loading = false;
-                    if (refresher) {
-                        refresher.complete();
-                    }
                     Logger.error(e);
+                }
+
+                if (this.poloniex.refreshState) {
+                    setTimeout(this.refresh.bind(__this), this.refreshDelay);
                 }
             });
         } catch (e) {
@@ -126,5 +142,9 @@ export class AccountPage implements OnInit {
 
     public onSettingsClick(): void {
         this.navCtrl.push(SettingsPage);
+    }
+
+    public toggleRefresh(refresher: Refresher): void {
+        this.poloniex.toggleRefresh(refresher);
     }
 }

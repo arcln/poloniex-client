@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, ContentChild, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams, Refresher} from 'ionic-angular';
 import {Logger} from '../../services/logger.service';
 import {PoloniexService} from '../../services/poloniex.service';
 import {UtilsService} from '../../services/utils.service';
@@ -39,6 +39,12 @@ export class ExchangePage implements AfterViewInit {
     }
 
     public ngAfterViewInit(): void {
+        const __this = this;
+
+        this.poloniex.$refreshState.subscribe(event => {
+            if (event) this.tickerUpdate.bind(__this).call()
+        });
+
         this.pageTitle = this.navParams.get('coin').key.split('_')[1];
         this.tickerUpdate();
         this.loadGraph();
@@ -58,7 +64,7 @@ export class ExchangePage implements AfterViewInit {
         this.poloniex.api('returnTicker').subscribe(function(ticker) {
             this.coin = ticker[this.navParams.get('coin').key];
             this.poloniex.api('returnCompleteBalances').subscribe(function(balances) {
-                if (balances && !balances.error) {
+                if (balances && !balances.error && balances[this.navParams.get('coin').key.split('_')[1]]) {
                     this.coinBalance = balances[this.navParams.get('coin').key.split('_')[1]].available;
                     let btcValue = ticker[this.navParams.get('coin').key.split('_')[0] + '_BTC'];
                     if (btcValue) {
@@ -69,13 +75,15 @@ export class ExchangePage implements AfterViewInit {
                     this.coinEstimation = this.utils.formatNb(balances[this.navParams.get('coin').key.split('_')[1]].btcValue * btcValue);
                     this.balanceLoading = false;
                 }
-                setTimeout(this.tickerUpdate.bind(this), this.refreshDelay);
+
+                if (this.poloniex.refreshState) {
+                    setTimeout(this.tickerUpdate.bind(this), this.refreshDelay);
+                }
             }.bind(this));
         }.bind(this));
     }
 
     private loadGraph(): void {
-        console.log(this.coin);
         this.poloniex.api('returnChartData', [
             this.navParams.get('coin').key.split('_')[0],
             this.navParams.get('coin').key.split('_')[1],
@@ -94,8 +102,6 @@ export class ExchangePage implements AfterViewInit {
                     y: point.low
                 });
             });
-
-            console.log(this.chartData);
 
             if (this.graphLoaded) {
                 Chart.defaults.global.animation.duration = 0;
@@ -179,5 +185,9 @@ export class ExchangePage implements AfterViewInit {
             coin: this.coin,
             key: this.navParams.get('coin').key
         });
+    }
+
+    public toggleRefresh(refresher: Refresher): void {
+        this.poloniex.toggleRefresh(refresher);
     }
 }

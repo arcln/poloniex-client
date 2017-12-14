@@ -13,6 +13,9 @@
 </ion-header>
 
 <ion-content>
+    <ion-refresher (ionRefresh)="toggleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
     <div>
         <ion-list no-border>
             <ion-item>

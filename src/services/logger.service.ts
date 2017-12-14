@@ -58,23 +58,26 @@ export class Logger {
         }
     }
 
-    public toast(message: string, buttonOrDuration: any) {
+    public toast(message: string, buttonOrDuration?: any) {
         let toast: Toast;
 
         if (typeof buttonOrDuration === 'string') {
             toast = this.toastCtrl.create({
                 message: message,
+                position: 'top',
                 showCloseButton: true,
                 closeButtonText: buttonOrDuration
             });
         } else if (typeof buttonOrDuration === 'number') {
             toast = this.toastCtrl.create({
                 message: message,
+                position: 'top',
                 duration: buttonOrDuration
             });
         } else {
             toast = this.toastCtrl.create({
                 message: message,
+                position: 'top',
                 duration: 3000
             });
         }

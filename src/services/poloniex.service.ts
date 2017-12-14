@@ -8,24 +8,33 @@ import * as Autobahn from 'autobahn';
 import {Storage} from '@ionic/storage';
 import 'rxjs/add/operator/catch';
 import {SettingsPage} from '../pages/settings/settings';
-import {NavController} from 'ionic-angular';
+import {NavController, Refresher} from 'ionic-angular';
 
 @Injectable()
 export class PoloniexService {
+    public refreshState: boolean = true;
+    public $refreshState: EventEmitter<any> = new EventEmitter<any>();
+
     private apiKey: string;
     private apiSecret: string;
     private wsUrl = 'wss://api.poloniex.com';
     private apiUrl = 'https://api.arthurchaloin.com/poloniex';
-    // private apiKey: string = 'I1QWXF64-KCASDOVD-B20N6DOX-CXRO9A4H';
-    // private apiSecret: string = '5ee550091c3493dac780202dad3e0cbc02c761eb4ad7c64295bf330a6f2d66fb279456151dd095745fa2dea00c16d69df808932bb89651f6b1de4e2666c24a29';
-    // private apiUrl = 'http://localhost:4210';
     private nonceErrorTimer: any;
     private nonceErrorCount: number = 0;
     private $openSettings: EventEmitter<any> = new EventEmitter<any>();
 
+    // private apiKey: string = 'I1QWXF64-KCASDOVD-B20N6DOX-CXRO9A4H';
+    // private apiSecret: string = '5ee550091c3493dac780202dad3e0cbc02c761eb4ad7c64295bf330a6f2d66fb279456151dd095745fa2dea00c16d69df808932bb89651f6b1de4e2666c24a29a';
+    // private apiUrl = 'http://localhost:4210';
+
     constructor(private logger: Logger,
                 private http: HttpClient,
                 private storage: Storage) {
+    }
+
+    private updateKeys(): void {
+        this.storage.get('apiKey').then(key => this.apiKey = key);
+        this.storage.get('apiSecret').then(key => this.apiSecret = key);
     }
 
     public api(command: string, params?: object): Observable<any> {
@@ -57,7 +66,7 @@ export class PoloniexService {
         connection.open();
     }
 
-    public errorHandler: (data: any) => any = function (data) {
+    private errorHandler: (data: any) => any = function (data) {
         if (data.error) {
             Logger.error(data.error);
             if (data.error.substr(0, 5) === 'Nonce') {
@@ -93,8 +102,15 @@ export class PoloniexService {
         this.$openSettings.subscribe(event => navCtrl.push(SettingsPage));
     }
 
-    private updateKeys(): void {
-        this.storage.get('apiKey').then(key => this.apiKey = key);
-        this.storage.get('apiSecret').then(key => this.apiSecret = key);
+    public toggleRefresh(refresher: Refresher): void {
+        refresher.complete();
+        this.refreshState = !this.refreshState;
+
+        if (this.refreshState) {
+            this.$refreshState.emit(true);
+            this.logger.toast('Live refresh enabled', 1000);
+        } else {
+            this.logger.toast('Live refresh disabled', 1000);
+        }
     }
 }
