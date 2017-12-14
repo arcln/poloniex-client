@@ -29,7 +29,9 @@ export class AccountPage implements OnInit {
     constructor(private navCtrl: NavController,
                 private poloniex: PoloniexService,
                 private utils: UtilsService,
-                private storage: Storage) {
+                private storage: Storage,
+                private logger: Logger,
+                private loadingCtrl: LoadingController) {
     }
 
     public ngOnInit(): void {
@@ -45,7 +47,7 @@ export class AccountPage implements OnInit {
 
         this.poloniex.subscribeToNavEvents(this.navCtrl);
         this.poloniex.$refreshState.subscribe(event => {
-            if (event) this.refresh.bind(__this).call()
+            if (event) this.refresh.bind(__this).call();
         });
 
         this.refresh.bind(__this).call();
@@ -105,12 +107,14 @@ export class AccountPage implements OnInit {
                 this.poloniex.api('returnTradeHistory', ['all', null]),
                 this.poloniex.api('returnOpenOrders', ['all', null]),
             ]).subscribe(data => {
-                data.forEach(req => {
-                    if (!this.poloniex.refreshState && req === '__nonce_failure') {
-                        this.refresh.bind(__this).call();
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i] === '__nonce_failure') {
+                        if (!this.poloniex.refreshState) {
+                            this.refresh.bind(__this).call();
+                        }
                         return;
                     }
-                });
+                }
 
                 try {
                     this.computeBalances(data[0], data[1]);
@@ -146,5 +150,20 @@ export class AccountPage implements OnInit {
 
     public toggleRefresh(refresher: Refresher): void {
         this.poloniex.toggleRefresh(refresher);
+    }
+
+    public cancelOrder(order: any, market: any): void {
+        const loading = this.loadingCtrl.create();
+        loading.present();
+
+        this.poloniex.api('cancelOrder', [
+            market.market.split(' ')[0],
+            market.market.split(' ')[2],
+            order.orderNumber
+        ]).subscribe(res => {
+            Logger.log(res);
+            loading.dismiss();
+            this.logger.alert('Success', 'Your order #' + order.orderNumber + ' was canceled.', ['OK']);
+        });
     }
 }

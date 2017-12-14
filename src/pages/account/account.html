@@ -115,20 +115,29 @@
                         <ion-list-header>
                             {{market.market}}
                         </ion-list-header>
-                        <ion-item *ngFor="let trade of market.data">
-                            <ion-row style="font-size: 14px;">
-                                <ion-col col-2>
-                                    <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
-                                    <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>
-                                </ion-col>
-                                <ion-col col-4 offset-1>
-                                    {{trade.amount}}
-                                </ion-col>
-                                <ion-col col-3>
-                                    @{{trade.rate}}
-                                </ion-col>
-                            </ion-row>
-                        </ion-item>
+                        <div *ngFor="let trade of market.data">
+                            <ion-item-sliding>
+                                <ion-item>
+                                    <ion-row style="font-size: 14px;">
+                                        <ion-col col-2>
+                                            <span *ngIf="trade.type === 'buy'" style="color: red">Buy</span>
+                                            <span *ngIf="trade.type === 'sell'" style="color: green">Sell</span>
+                                        </ion-col>
+                                        <ion-col col-4 offset-1>
+                                            {{trade.amount}}
+                                        </ion-col>
+                                        <ion-col col-3>
+                                            @{{trade.rate}}
+                                        </ion-col>
+                                    </ion-row>
+                                </ion-item>
+                                <ion-item-options side="right">
+                                    <button ion-button color="danger" (click)="cancelOrder(trade, market)">
+                                        Cancel
+                                    </button>
+                                </ion-item-options>
+                            </ion-item-sliding>
+                        </div>
                     </ion-list>
                 </div>
             </div>
