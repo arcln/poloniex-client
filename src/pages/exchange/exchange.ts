@@ -21,7 +21,8 @@ export class ExchangePage implements AfterViewInit {
     public coinEstimation: number = 0;
 
     private chart: any;
-    private chartData: Array<any> = [];
+    private chartDataLow: Array<any> = [];
+    private chartDataHigh: Array<any> = [];
     private chartLabels: Array<any> = [];
     private period: string = '24h';
     private resolution: string = '30m';
@@ -42,7 +43,7 @@ export class ExchangePage implements AfterViewInit {
         const __this = this;
 
         this.poloniex.$refreshState.subscribe(event => {
-            if (event) this.tickerUpdate.bind(__this).call()
+            if (event) this.tickerUpdate.bind(__this).call();
         });
 
         this.pageTitle = this.navParams.get('coin').key.split('_')[1];
@@ -61,9 +62,9 @@ export class ExchangePage implements AfterViewInit {
 
     private tickerUpdate(): void {
         this.loadGraph();
-        this.poloniex.api('returnTicker').subscribe(function(ticker) {
+        this.poloniex.api('returnTicker').subscribe(function (ticker) {
             this.coin = ticker[this.navParams.get('coin').key];
-            this.poloniex.api('returnCompleteBalances').subscribe(function(balances) {
+            this.poloniex.api('returnCompleteBalances').subscribe(function (balances) {
                 if (balances && !balances.error && balances[this.navParams.get('coin').key.split('_')[1]]) {
                     this.coinBalance = balances[this.navParams.get('coin').key.split('_')[1]].available;
                     let btcValue = ticker[this.navParams.get('coin').key.split('_')[0] + '_BTC'];
@@ -90,16 +91,22 @@ export class ExchangePage implements AfterViewInit {
             this.getGraphPeriod(),
             this.getGraphStart(),
             Date.now(),
-        ]).subscribe(function(data) {
+        ]).subscribe(function (data) {
             this.loading = true;
-            this.chartData = [];
+            this.chartDataLow = [];
+            this.chartDataHigh = [];
             this.chartLabels = [];
 
             data.forEach(point => {
                 this.chartLabels.push(this.formatDate(point.date));
-                this.chartData.push({
+                // this.chartDataLow.push({
+                //     x: point.date,
+                //     y: point.open
+                // });
+                // console.log(point);
+                this.chartDataHigh.push({
                     x: point.date,
-                    y: point.low
+                    y: point.close
                 });
             });
 
@@ -114,7 +121,7 @@ export class ExchangePage implements AfterViewInit {
                 data: {
                     labels: this.chartLabels,
                     datasets: [{
-                        data: this.chartData,
+                        data: this.chartDataHigh,
                         lineTension: 0,
                         backgroundColor: 'rgba(55,166,119,.2)',
                         borderColor: 'rgb(55,166,119)',
@@ -140,28 +147,44 @@ export class ExchangePage implements AfterViewInit {
 
     private getGraphPeriod(): number {
         switch (this.resolution) {
-            case '5m':  return 300;
-            case '15m': return 900;
-            case '30m': return 1800;
-            case '2h':  return 7200;
-            case '4h':  return 14400;
-            case '24h': return 86400;
-            default:    return 1800;
+            case '5m':
+                return 300;
+            case '15m':
+                return 900;
+            case '30m':
+                return 1800;
+            case '2h':
+                return 7200;
+            case '4h':
+                return 14400;
+            case '24h':
+                return 86400;
+            default:
+                return 1800;
         }
     }
 
     private getGraphStart(): number {
         const now = Date.now() / 1000 | 0;
         switch (this.period) {
-            case '6h':  return now - 6 * 3600;
-            case '24h': return now - 24 * 3600;
-            case '2d':  return now - 48 * 3600;
-            case '4d':  return now - 96 * 3600;
-            case '1w':  return now - 7 * 24 * 3600;
-            case '2w':  return now - 14 * 24 * 3600;
-            case '1m':  return now - 31 * 24 * 3600;
-            case 'all': return 0;
-            default:    return now - 24 * 3600;
+            case '6h':
+                return now - 6 * 3600;
+            case '24h':
+                return now - 24 * 3600;
+            case '2d':
+                return now - 48 * 3600;
+            case '4d':
+                return now - 96 * 3600;
+            case '1w':
+                return now - 7 * 24 * 3600;
+            case '2w':
+                return now - 14 * 24 * 3600;
+            case '1m':
+                return now - 31 * 24 * 3600;
+            case 'all':
+                return 0;
+            default:
+                return now - 24 * 3600;
         }
     }
 
@@ -169,10 +192,14 @@ export class ExchangePage implements AfterViewInit {
         const date = new Date(ts * 1000);
 
         switch (this.period) {
-            case '6h':  return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
-            case '24h': return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
-            case '2d':  return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
-            default:    return `${date.getDate()}/${date.getMonth() + 1} ${date.getHours()}h`;
+            case '6h':
+                return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
+            case '24h':
+                return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
+            case '2d':
+                return `${date.getHours()}:${date.getMinutes()}${date.getMinutes() == 0 ? '0' : ''}`;
+            default:
+                return `${date.getDate()}/${date.getMonth() + 1} ${date.getHours()}h`;
         }
     }
 
