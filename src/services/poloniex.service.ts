@@ -23,10 +23,6 @@ export class PoloniexService {
     private nonceErrorCount: number = 0;
     private $openSettings: EventEmitter<any> = new EventEmitter<any>();
 
-    // private apiKey: string = 'I1QWXF64-KCASDOVD-B20N6DOX-CXRO9A4H';
-    // private apiSecret: string = '5ee550091c3493dac780202dad3e0cbc02c761eb4ad7c64295bf330a6f2d66fb279456151dd095745fa2dea00c16d69df808932bb89651f6b1de4e2666c24a29a';
-    // private apiUrl = 'http://localhost:4210';
-
     constructor(private logger: Logger,
                 private http: HttpClient,
                 private storage: Storage) {
